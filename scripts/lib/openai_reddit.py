@@ -7,11 +7,38 @@ from typing import Any, Dict, List, Optional
 
 from . import http
 
+# Fallback models when the selected model isn't accessible (e.g., org not verified for GPT-5)
+MODEL_FALLBACK_ORDER = ["gpt-4o", "gpt-4o-mini"]
+
 
 def _log_error(msg: str):
     """Log error to stderr."""
     sys.stderr.write(f"[REDDIT ERROR] {msg}\n")
     sys.stderr.flush()
+
+
+def _log_info(msg: str):
+    """Log info to stderr."""
+    sys.stderr.write(f"[REDDIT] {msg}\n")
+    sys.stderr.flush()
+
+
+def _is_model_access_error(error: http.HTTPError) -> bool:
+    """Check if error is due to model access/verification issues."""
+    if error.status_code != 400:
+        return False
+    if not error.body:
+        return False
+    body_lower = error.body.lower()
+    # Check for common access/verification error messages
+    return any(phrase in body_lower for phrase in [
+        "verified",
+        "organization must be",
+        "does not have access",
+        "not available",
+        "not found",
+    ])
+
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 
@@ -113,29 +140,50 @@ def search_reddit(
     # Adjust timeout based on depth (generous for OpenAI web_search which can be slow)
     timeout = 90 if depth == "quick" else 120 if depth == "default" else 180
 
+    # Build list of models to try: requested model first, then fallbacks
+    models_to_try = [model] + [m for m in MODEL_FALLBACK_ORDER if m != model]
+
     # Note: allowed_domains accepts base domain, not subdomains
     # We rely on prompt to filter out developers.reddit.com, etc.
-    payload = {
-        "model": model,
-        "tools": [
-            {
-                "type": "web_search",
-                "filters": {
-                    "allowed_domains": ["reddit.com"]
-                }
-            }
-        ],
-        "include": ["web_search_call.action.sources"],
-        "input": REDDIT_SEARCH_PROMPT.format(
-            topic=topic,
-            from_date=from_date,
-            to_date=to_date,
-            min_items=min_items,
-            max_items=max_items,
-        ),
-    }
+    input_text = REDDIT_SEARCH_PROMPT.format(
+        topic=topic,
+        from_date=from_date,
+        to_date=to_date,
+        min_items=min_items,
+        max_items=max_items,
+    )
 
-    return http.post(OPENAI_RESPONSES_URL, payload, headers=headers, timeout=timeout)
+    last_error = None
+    for current_model in models_to_try:
+        payload = {
+            "model": current_model,
+            "tools": [
+                {
+                    "type": "web_search",
+                    "filters": {
+                        "allowed_domains": ["reddit.com"]
+                    }
+                }
+            ],
+            "include": ["web_search_call.action.sources"],
+            "input": input_text,
+        }
+
+        try:
+            return http.post(OPENAI_RESPONSES_URL, payload, headers=headers, timeout=timeout)
+        except http.HTTPError as e:
+            last_error = e
+            if _is_model_access_error(e):
+                _log_info(f"Model {current_model} not accessible, trying fallback...")
+                continue
+            # Non-access error, don't retry with different model
+            raise
+
+    # All models failed with access errors
+    if last_error:
+        _log_error(f"All models failed. Last error: {last_error}")
+        raise last_error
+    raise http.HTTPError("No models available")
 
 
 def parse_reddit_response(response: Dict[str, Any]) -> List[Dict[str, Any]]:
