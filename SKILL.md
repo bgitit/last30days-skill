@@ -215,15 +215,26 @@ Identify from the ACTUAL RESEARCH OUTPUT:
 
 **FIRST - What I learned (based on QUERY_TYPE):**
 
-**If RECOMMENDATIONS** - Show specific things mentioned:
+**If RECOMMENDATIONS** - Show specific things mentioned in ASCII TABLE format:
 ```
-Most mentioned:
-1. [Specific name] - mentioned {n}x (r/sub, @handle, blog.com)
-2. [Specific name] - mentioned {n}x (sources)
-3. [Specific name] - mentioned {n}x (sources)
+🏆 Most mentioned:
+
+┌────────────────────┬─────────────┬───────────┬─────────────────────────────────────┐
+│ Name               │ Details     │ Mentions  │ Key Sources                         │
+├────────────────────┼─────────────┼───────────┼─────────────────────────────────────┤
+│ [Specific name]    │ [context]   │ {n}x      │ @handle1, @handle2, r/sub, blog.com │
+│ [Specific name]    │ [context]   │ {n}x      │ @handle3, Rolling Stone, Complex    │
+│ [Specific name]    │ [context]   │ {n}x      │ r/sub, @handle4, Variety            │
+└────────────────────┴─────────────┴───────────┴─────────────────────────────────────┘
 
 Notable mentions: [other specific things with 1-2 mentions]
 ```
+
+**CRITICAL for RECOMMENDATIONS:**
+- Use ASCII box-drawing characters (┌ ─ ┬ ┐ │ ├ ┼ ┤ └ ┴ ┘) for tables
+- "Key Sources" column MUST include actual @handles from X posts (e.g., @LONGLIVE47, @ByDobson)
+- Include subreddit names (r/hiphopheads) and web sources (Complex, Variety)
+- Parse @handles from research output and include the highest-engagement ones
 
 **If PROMPTING/NEWS/GENERAL** - Show synthesis and patterns:
 ```
