@@ -114,6 +114,25 @@ def _search_reddit(
             except Exception:
                 pass
 
+    # Subreddit-targeted fallback if still < 3 results
+    if len(reddit_items) < 3 and not mock and not reddit_error:
+        sub_query = openai_reddit._build_subreddit_query(topic)
+        try:
+            sub_raw = openai_reddit.search_reddit(
+                config["OPENAI_API_KEY"],
+                selected_models["openai"],
+                sub_query,
+                from_date, to_date,
+                depth=depth,
+            )
+            sub_items = openai_reddit.parse_reddit_response(sub_raw)
+            existing_urls = {item.get("url") for item in reddit_items}
+            for item in sub_items:
+                if item.get("url") not in existing_urls:
+                    reddit_items.append(item)
+        except Exception:
+            pass
+
     return reddit_items, raw_openai, reddit_error
 
 
@@ -487,6 +506,13 @@ def main():
     # Dedupe items
     deduped_reddit = dedupe.dedupe_reddit(sorted_reddit)
     deduped_x = dedupe.dedupe_x(sorted_x)
+
+    # Minimum result guarantee: if all Reddit results were filtered out but
+    # we had raw results, keep top 3 by relevance regardless of score
+    if not deduped_reddit and normalized_reddit:
+        print("[REDDIT WARNING] All results scored below threshold, keeping top 3 by relevance", file=sys.stderr)
+        by_relevance = sorted(normalized_reddit, key=lambda item: item.relevance, reverse=True)
+        deduped_reddit = by_relevance[:3]
 
     progress.end_processing()
 

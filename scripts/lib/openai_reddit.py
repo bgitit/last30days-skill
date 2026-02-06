@@ -103,6 +103,18 @@ def _extract_core_subject(topic: str) -> str:
     return ' '.join(result[:3]) or topic  # Keep max 3 words
 
 
+def _build_subreddit_query(topic: str) -> str:
+    """Build a subreddit-targeted search query for fallback.
+
+    When standard search returns few results, try searching for the
+    subreddit itself: 'r/kanye', 'r/howie', etc.
+    """
+    core = _extract_core_subject(topic)
+    # Remove dots and special chars for subreddit name guess
+    sub_name = core.replace('.', '').replace(' ', '').lower()
+    return f"r/{sub_name} site:reddit.com"
+
+
 def search_reddit(
     api_key: str,
     model: str,

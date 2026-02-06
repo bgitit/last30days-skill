@@ -157,27 +157,28 @@ Notable mentions: [other specific things with 1-2 mentions]
 
 **If PROMPTING/NEWS/GENERAL** - Show synthesis and patterns:
 
-**CRITICAL: Every insight MUST cite at least one source.** Use @handle for X posts, r/subreddit for Reddit. This proves you're using real research, not making things up.
+CITATION RULE: Cite sources sparingly to prove research is real.
+- In the "What I learned" intro: cite 1-2 top sources total, not every sentence
+- In KEY PATTERNS: cite 1 source per pattern, short format: "per @handle" or "per r/sub"
+- Do NOT include engagement metrics in citations (likes, upvotes) - save those for stats box
+- Do NOT chain multiple citations: "per @x, @y, @z" is too much. Pick the strongest one.
 
-**BAD (no attribution):**
-```
-His 12th studio album is now set for March 20, 2026 via a new deal with Gamma.
-```
-
-**GOOD (cites sources):**
-```
-His 12th studio album BULLY is set for March 20, 2026 via Gamma (per @XXX, 15 likes; r/kanye thread with 200 upvotes).
-```
+**BAD:** "His album is set for March 20 (per @cocoabutterbf; Rolling Stone; HotNewHipHop; Complex)."
+**GOOD:** "His album BULLY is set for March 20 via Gamma, per Rolling Stone."
 
 ```
 What I learned:
 
-[2-4 sentences synthesizing key insights. EVERY claim cites @handle or r/subreddit.]
+**{Topic 1}** — [1-2 sentences about this storyline, per source]
+
+**{Topic 2}** — [1-2 sentences, per source]
+
+**{Topic 3}** — [1-2 sentences, per source]
 
 KEY PATTERNS from the research:
-1. [Pattern from research] - per @handle, r/sub
-2. [Pattern from research] - per @handle
-3. [Pattern from research] - per r/sub
+1. [Pattern] — per @handle
+2. [Pattern] — per r/sub
+3. [Pattern] — per source
 ```
 
 **THEN - Stats (right before invitation):**
@@ -187,33 +188,20 @@ KEY PATTERNS from the research:
 - Sum engagement: parse `[Xlikes, Yrt]` from each X post, `[Xpts, Ycmt]` from Reddit
 - Identify top voices: highest-engagement @handles from X, most active subreddits
 
-**You MUST use this EXACT format with these EXACT emoji characters. Do NOT use markdown tables. Do NOT use plain text dashes. Copy this template character-for-character:**
+**Copy this EXACTLY, replacing only the {placeholders}:**
 
 ```
 ---
 ✅ All agents reported back!
-├─ 🟠 Reddit: {n} threads │ {sum} upvotes │ {sum} comments
-├─ 🔵 X: {n} posts │ {sum} likes │ {sum} reposts (via Bird/xAI)
-├─ 🌐 Web: {n} pages │ {domains}
-└─ 🗣️ Top voices: @{handle1} ({n}K likes), @{handle2} │ r/{sub1}, r/{sub2}
-```
-
-**BAD (DO NOT DO THIS):**
-```
----All agents reported back!
-- Reddit: 10 threads | 54 upvotes
-- X: 3 posts | 21 likes
-```
-
-**GOOD (DO THIS):**
-```
+├─ 🟠 Reddit: {N} threads │ {N} upvotes │ {N} comments
+├─ 🔵 X: {N} posts │ {N} likes │ {N} reposts (via Bird/xAI)
+├─ 🌐 Web: {N} pages │ {domain1}, {domain2}, {domain3}
+└─ 🗣️ Top voices: @{handle1} ({N} likes), @{handle2} │ r/{sub1}, r/{sub2}
 ---
-✅ All agents reported back!
-├─ 🟠 Reddit: 10 threads │ 54 upvotes │ 144 comments
-├─ 🔵 X: 3 posts │ 21 likes │ 10 reposts (via Bird)
-├─ 🌐 Web: 20 pages │ digitalocean.com, dev.to, medium.com
-└─ 🗣️ Top voices: @yhemi0pe (10 likes, 10rt), @0x1BMW │ r/openclaw, r/AI_Agents
 ```
+
+If Reddit returned 0 threads, write: "├─ 🟠 Reddit: 0 threads (no results this cycle)"
+NEVER use plain text dashes (-) or pipe (|). ALWAYS use ├─ └─ │ and the emoji.
 
 **LAST - Invitation:**
 ```
